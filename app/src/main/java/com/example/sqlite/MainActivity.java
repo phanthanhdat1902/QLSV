@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         listStudentSQLite=dbManager.getListStudent();
         studentAdapter=new StudentAdapter(this,R.layout.item,listStudentSQLite);
         listView.setAdapter(studentAdapter);
+        registerForContextMenu(listView);
+
     }
 
     @Override
@@ -80,15 +83,24 @@ public class MainActivity extends AppCompatActivity {
                 email=editEmail.getText().toString();
                 Student student=new Student(name, date,email,address);
                 dbManager.addStudent(student);
-                studentAdapter.add(student);
+                listStudentSQLite.add(student);
+                studentAdapter.notifyDataSetChanged();
+               // studentAdapter.add(student);
                 dialogAdd.dismiss();
             }
         });
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getMenuInflater().inflate(R.menu.context_menu,menu);
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        Log.d("BacNT", "OnResume ");
         studentAdapter.notifyDataSetChanged();
     }
 }
