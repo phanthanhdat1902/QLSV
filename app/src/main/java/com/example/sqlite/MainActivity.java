@@ -3,9 +3,14 @@ package com.example.sqlite;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.sqlite.adapter.StudentAdapter;
@@ -20,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     List<Student> listStudentSQLite=new ArrayList<>();
     StudentAdapter studentAdapter;
     ListView listView;
+    String name, address,email,date;
+    DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,24 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
         listView=findViewById(R.id.list_student);
 
-        DBManager dbManager=new DBManager(this);
+       dbManager=new DBManager(this);
 
-
-
-//        listStudent.add(new Student("Nguyễn Văn A","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//        listStudent.add(new Student("Nguyễn Văn B","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//        listStudent.add(new Student("Nguyễn Văn C","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//        listStudent.add(new Student("Nguyễn Văn D","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//        listStudent.add(new Student("Nguyễn Văn E","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//        listStudent.add(new Student("Nguyễn Văn F","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//        listStudent.add(new Student("Nguyễn Văn G","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//        listStudent.add(new Student("Nguyễn Văn H","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//        listStudent.add(new Student("Nguyễn Văn L","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//        listStudent.add(new Student("Nguyễn Văn M","20/10/1999","a.nt@sis.hust.edu.vn","Hà Nội"));
-//
-//        for(Student student: listStudent){
-//            dbManager.addStudent(student);
-//        }
 
         listStudentSQLite=dbManager.getListStudent();
         studentAdapter=new StudentAdapter(this,R.layout.item,listStudentSQLite);
@@ -64,8 +55,40 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id=item.getItemId();
         if(id==R.id.add){
-
+            dialogAdd();
         }
         return true;
+    }
+    private void dialogAdd(){
+        final Dialog dialogAdd=new Dialog(this);
+        dialogAdd.setContentView(R.layout.dialog_add);
+        final EditText editName=dialogAdd.findViewById(R.id.edit_name);
+        final EditText editDate=dialogAdd.findViewById(R.id.edit_date);
+
+        final EditText editAddress=dialogAdd.findViewById(R.id.edit_address);
+
+        final EditText editEmail=dialogAdd.findViewById(R.id.edit_mail);
+        Button buttonSave=dialogAdd.findViewById(R.id.button_save);
+
+        dialogAdd.show();
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                name=editName.getText().toString();
+                address=editAddress.getText().toString();
+                date=editDate.getText().toString();
+                email=editEmail.getText().toString();
+                Student student=new Student(name, date,email,address);
+                dbManager.addStudent(student);
+                studentAdapter.add(student);
+                dialogAdd.dismiss();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        studentAdapter.notifyDataSetChanged();
     }
 }

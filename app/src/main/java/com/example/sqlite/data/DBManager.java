@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -46,6 +47,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     }
     public void addStudent(Student student){
+        Log.d("BacNT", "add");
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues contentValues=new ContentValues();
         contentValues.put(NAME,student.getName());
